@@ -50,16 +50,20 @@ def update_user_info(id, changed_password=None, changed_store_id=None):
 
     update_data = []
 
-    sql = f"UPDATE basicUserInfo SET %s = %s WHERE id = \"{id}\""
-
     if changed_password:
         update_data.append(['password', changed_password])
     if changed_store_id:
         update_data.append(['store_id', changed_store_id])
 
+    try:
+        for data in update_data:
+            sql = f"UPDATE basicUserInfo SET {data[0]} = \"{data[1]}\" WHERE id = \"{id}\""
+            cursor.execute(sql)
 
-    cursor.executemany(sql, update_data)
-    test_db.commit()
+        test_db.commit()
+    except:
+        print("error")
+        return False
 
     cursor.close()
     test_db.close()
