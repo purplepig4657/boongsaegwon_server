@@ -1,12 +1,14 @@
 from database import data_connection
-
+from pypika import Query, Table
 
 def get_user_info(id):
     test_db = data_connection.connect_to_test()
     cursor = data_connection.generate_cursor(test_db)
 
-    sql = f"SELECT * FROM basicUserInfo WHERE id = \"{id}\";"
 
+    basicUserInfo = Table('basicUserInfo')
+    sql = Query.from_(basicUserInfo).select('*').where(basicUserInfo.id == id)
+    sql = sql.get_sql().replace('"', '')
     cursor.execute(sql)
     result = cursor.fetchall()
 
@@ -21,17 +23,29 @@ def insert_user_info(id, password, store_id=None):
     cursor = data_connection.generate_cursor(test_db)
 
     if store_id:
-        sql = f"INSERT INTO basicUserInfo (id, password, store_id) VALUES (\"{id}\", \"{password}\", {store_id});"
-    else:
-        sql = f"INSERT INTO basicUserInfo (id, password) VALUES (\"{id}\", \"{password}\");"
+        basicUserInfo = Table('basicUserInfo')
+        sql = Query.into(basicUserInfo).columns(
+        'id','password','store_id'
+        ).insert(
+        id,password,store_id
+        )
 
+    else:
+
+        basicUserInfo = Table('basicUserInfo')
+        sql = Query.into(basicUserInfo).columns(
+            'id','password'
+        ).insert(
+            id,password
+        )
+
+    sql = sql.get_sql().replace('"', '')
     cursor.execute(sql)
     test_db.commit()
 
     cursor.close()
     test_db.close()
 
-    return result
 
 
 def update_user_info(id, changed_password=None, changed_store_id=None):
@@ -48,7 +62,16 @@ def update_user_info(id, changed_password=None, changed_store_id=None):
         update_data.append(['store_id', changed_store_id])
 
     for data in update_data:
-        sql = f"UPDATE basicUserInfo SET {data[0]} = \"{data[1]}\" WHERE id = \"{id}\";"
+
+        basicUserInfo = Table('basicUserInfo')
+        sql = Query.update(
+         basicUserInfo
+        ).set(
+            data[0], data[1]
+        ).where(
+            basicUserInfo.id == id
+        )
+        sql = sql.get_sql().replace('"', '')
         cursor.execute(sql)
 
     test_db.commit()
