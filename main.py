@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from database import user_data
+from database import user_data_handle
 
 app = Flask(__name__, template_folder='templates')
 
@@ -17,7 +18,8 @@ def get_test():
 
 @app.route('/db')
 def db():
-    result = user_data.get_user_info(id="asdf")
+    result = user_data_handle.find_user_info(id="asdf")
+    # user_data.insert_user_info("fdsg", "asdf")
     user_data.update_user_info("d", changed_store_id=123)
 
     return str(result)

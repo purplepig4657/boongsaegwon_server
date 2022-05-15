@@ -7,12 +7,8 @@ def get_user_info(id):
 
     sql = f"SELECT * FROM basicUserInfo WHERE id = \"{id}\";"
 
-    try:
-        cursor.execute(sql)
-        result = cursor.fetchall()
-    except:
-        print("error")
-        return None
+    cursor.execute(sql)
+    result = cursor.fetchall()
 
     cursor.close()
     test_db.close()
@@ -29,17 +25,13 @@ def insert_user_info(id, password, store_id=None):
     else:
         sql = f"INSERT INTO basicUserInfo (id, password) VALUES (\"{id}\", \"{password}\");"
 
-    try:
-        cursor.execute(sql)
-        test_db.commit()
-    except:
-        print("error")
-        return False
+    cursor.execute(sql)
+    test_db.commit()
 
     cursor.close()
     test_db.close()
 
-    return True
+    return result
 
 
 def update_user_info(id, changed_password=None, changed_store_id=None):
@@ -55,15 +47,11 @@ def update_user_info(id, changed_password=None, changed_store_id=None):
     if changed_store_id:
         update_data.append(['store_id', changed_store_id])
 
-    try:
-        for data in update_data:
-            sql = f"UPDATE basicUserInfo SET {data[0]} = \"{data[1]}\" WHERE id = \"{id}\""
-            cursor.execute(sql)
+    for data in update_data:
+        sql = f"UPDATE basicUserInfo SET {data[0]} = \"{data[1]}\" WHERE id = \"{id}\";"
+        cursor.execute(sql)
 
-        test_db.commit()
-    except:
-        print("error")
-        return False
+    test_db.commit()
 
     cursor.close()
     test_db.close()
