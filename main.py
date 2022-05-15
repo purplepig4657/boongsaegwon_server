@@ -19,8 +19,8 @@ def get_test():
 @app.route('/db')
 def db():
     result = user_data_handle.find_user_info(id="asdf")
-    # user_data.insert_user_info("fdsg", "asdf")
-    user_data.update_user_info("d", changed_store_id=123)
+    # user_data.insert_user_info("dfssdfsdgd", "asdf")
+    user_data.update_user_info("asdf", changed_store_id=21)
 
     return str(result)
 
