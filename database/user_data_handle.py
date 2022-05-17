@@ -12,10 +12,10 @@ def find_user_info(id):
             print("EXCEPTION: programming logic error -> not only code logic, also database table etc...")
             return "ProgrammingError"
         elif error.__class__ == err.OperationalError:
-            print("EXCEPTION: check the connection or mysql server")
+            print("EXCEPTION: check the connection or mysql server, and executed sql.")
             return "OperationalError"
         elif error.__class__ == err.InterfaceError:
-            print("EXCEPTION: check the sql query -> maybe there is a query value error")
+            print("EXCEPTION: check the sql query -> maybe there is a query value error.")
             return "InterfaceError"
         else:
             print(error)

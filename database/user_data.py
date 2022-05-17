@@ -8,8 +8,7 @@ def get_user_info(id):
 
     basic_user_info = Table('basicUserInfo')
     query = Query.from_(basic_user_info).select('*').where(basic_user_info.id == id)
-    sql = query.get_sql().replace('"', '')
-    print(sql)
+    sql = query.get_sql()
     cursor.execute(sql)
     result = cursor.fetchall()
 
@@ -25,13 +24,22 @@ def insert_user_info(id, password, store_id=None):
 
     basic_user_info = Table('basicUserInfo')
 
-    if store_id:
-        query = Query.into(basic_user_info).columns('id', 'password', 'store_id').insert(id, password, store_id)
-    else:
-        query = Query.into(basic_user_info).columns('id', 'password').insert(id, password)
+    insert_column = []
+    insert_data = []
 
-    sql = query.get_sql().replace('"', '')
-    print(sql)
+    if id:
+        insert_column.append("id")
+        insert_data.append(id)
+    if password:
+        insert_column.append("password")
+        insert_data.append(password)
+    if store_id:
+        insert_column.append("store_id")
+        insert_data.append(store_id)
+
+    query = Query.into(basic_user_info).columns(*insert_column).insert(*insert_data)
+
+    sql = query.get_sql()
     cursor.execute(sql)
     test_db.commit()
 
@@ -39,7 +47,7 @@ def insert_user_info(id, password, store_id=None):
     test_db.close()
 
 
-def update_user_info(id, changed_password=None, changed_store_id=None):
+def update_user_info(id, password=None, store_id=None):
     # id cannot be changed
 
     test_db = data_connection.connect_to_test()
@@ -47,22 +55,19 @@ def update_user_info(id, changed_password=None, changed_store_id=None):
 
     update_data = []
 
-    if changed_password:
-        update_data.append(['password', changed_password])
-    if changed_store_id:
-        update_data.append(['store_id', changed_store_id])
+    if password:
+        update_data.append(['password', password])
+    if store_id:
+        update_data.append(['store_id', store_id])
 
     basic_user_info = Table('basicUserInfo')
 
     for data in update_data:
         query = Query.update(basic_user_info).set(data[0], data[1]).where(basic_user_info.id == id)
-        sql = query.get_sql().replace('"', '')
-        print(sql)
+        sql = query.get_sql()
         cursor.execute(sql)
 
     test_db.commit()
 
     cursor.close()
     test_db.close()
-
-    return True
