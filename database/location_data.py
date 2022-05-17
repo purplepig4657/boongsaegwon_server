@@ -1,12 +1,12 @@
 from database import data_connection
 from pypika import Query, Table
 
-def get_location_info(location):
+def get_location_info(store_id):
     test_db = data_connection.connect_to_test()
     cursor = data_connection.generate_cursor(test_db)
 
     location_table = Table('locationData')
-    query = Query.from_(location_table).select('*').where(location_table.location == location)
+    query = Query.from_(location_table).select('*').where(location_table.store_id == store_id)
     sql = query.get_sql().replace('"', '')
 
     cursor.execute(sql)
