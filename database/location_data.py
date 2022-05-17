@@ -1,5 +1,7 @@
-from database import data_connection
 from pypika import Query, Table
+
+from database import data_connection
+
 
 def get_location_info(store_id):
     test_db = data_connection.connect_to_test()
@@ -17,13 +19,14 @@ def get_location_info(store_id):
 
     return result
 
+
 def insert_location_info(_id, store_id, store_name, is_open, location):
     test_db = data_connection.connect_to_test()
     cursor = data_connection.generate_cursor(test_db)
 
     location_table = Table('locationData')
 
-    column = ["_id","store_id","store_name","is_open","location"]
+    column = ["_id", "store_id", "store_name", "is_open", "location"]
     data = [_id, store_id, store_name, is_open, location]
 
     insert_column = []
@@ -52,7 +55,6 @@ def update_location_info(_id, store_id, store_name, is_open, location):
 
     column = ["_id", "store_id", "store_name", "is_open", "location"]
     data = [_id, store_id, store_name, is_open, location]
-
 
     for c, d in zip(column, data):
         if d is not None:

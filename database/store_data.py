@@ -1,13 +1,31 @@
-from database import data_connection
 from pypika import Query, Table
 
+from database import data_connection
 
-def get_store_info(store_id):
+
+def get_store_info_by_store_id(store_id):
     test_db = data_connection.connect_to_test()
     cursor = data_connection.generate_cursor(test_db)
 
     store_table = Table('store')
     query = Query.from_(store_table).select('*').where(store_table.store_id == store_id)
+    sql = query.get_sql().replace('"', '')
+
+    cursor.execute(sql)
+    result = cursor.fetchall()
+
+    cursor.close()
+    test_db.close()
+
+    return result
+
+
+def get_store_info_by_name(name):
+    test_db = data_connection.connect_to_test()
+    cursor = data_connection.generate_cursor(test_db)
+
+    store_table = Table('store')
+    query = Query.from_(store_table).select('*').where(store_table.name == name)
     sql = query.get_sql().replace('"', '')
 
     cursor.execute(sql)
@@ -50,6 +68,7 @@ def insert_store_info(name, store_name, category, store_description=None,
 def update_store_info(store_id, name=None, store_name=None, category=None, store_description=None,
                       store_open_info=None, store_photo=None, menu_info=None):
     # store_id cannot be changed
+
     test_db = data_connection.connect_to_test()
     cursor = data_connection.generate_cursor(test_db)
 

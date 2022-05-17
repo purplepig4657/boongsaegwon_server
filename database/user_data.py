@@ -1,5 +1,6 @@
-from database import data_connection
 from pypika import Query, Table
+
+from database import data_connection
 
 
 def get_user_info(id):

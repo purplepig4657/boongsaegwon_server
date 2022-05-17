@@ -1,9 +1,12 @@
 from pymysql import err
-from database import user_data
 from flask_bcrypt import Bcrypt
 
+from database import user_data
+from database import store_data_handle
+from database.data_validation import utf8len, data_len
 
-def find_user_info(id):
+
+def find_user(id):
     try:
         result = user_data.get_user_info(id=id)
     except Exception as error:
@@ -27,11 +30,76 @@ def find_user_info(id):
         return result[0]
 
 
-def create_user_info(id, password, store_id=None):
+def create_user(id, password):
+    if find_user(id=id) is not None:  # ID Integrity Check
+        print(f"EXCEPTION: id is duplicated")
+        return "DuplicatedId"
+    if id is not None and data_len['id'] < utf8len(id):
+        print(f"EXCEPTION: id is too long, have to be under {data_len['id']} bytes")
+        return "TooLongId"
+    if password is not None and data_len['password'] < utf8len(password):
+        print(f"EXCEPTION: password is too long, have to be under {data_len['password']} bytes")
+        return "TooLongPassword"
+
     bcrypt = Bcrypt()
     password_hash = bcrypt.generate_password_hash(password)  # password hashing
 
-    # 스토어 생성부터
+    try:
+        store_data_handle.create_store(name=id, store_name=None, category=None)
+        store_data = store_data_handle.find_store(name=id)
+        store_id = store_data['store_id']
+        user_data.insert_user_info(id=id, password=str(password_hash, 'utf-8'), store_id=store_id)
 
-    if find_user_info(id=id):  # ID 중복 체크
-        user_data.insert_user_info(id=id, password=password_hash, )
+    except Exception as error:
+        print(error.__class__)
+        if error.__class__ == err.ProgrammingError:
+            print("EXCEPTION: programming logic error -> not only code logic, also database table etc...")
+            return "ProgrammingError"
+        elif error.__class__ == err.OperationalError:
+            print("EXCEPTION: check the connection or mysql server, and executed sql.")
+            return "OperationalError"
+        elif error.__class__ == err.InterfaceError:
+            print("EXCEPTION: check the sql query -> maybe there is a query value error.")
+            return "InterfaceError"
+        else:
+            print(error)
+            return str(error.__class__)
+
+    return True
+
+
+def update_user(id, password=None, store_id=None):
+    if find_user(id=id) is None:  # ID validation Check
+        print(f"EXCEPTION: id is invalid")
+        return "InvalidId"
+    if store_id is not None and type(store_id) != int:
+        print(f"EXCEPTION: store_id type is int")
+        return "TypeError"
+    if password is not None and data_len['password'] < utf8len(password):
+        print(f"EXCEPTION: password is too long, have to be under {data_len['password']} bytes")
+        return "TooLongPassword"
+
+    try:
+        if password is not None:
+            bcrypt = Bcrypt()
+            password_hash = bcrypt.generate_password_hash(password)  # password hashing
+            user_data.update_user_info(id=id, password=str(password_hash, 'utf-8'), store_id=store_id)
+        else:
+            user_data.update_user_info(id=id, store_id=store_id)
+
+    except Exception as error:
+        print(error.__class__)
+        if error.__class__ == err.ProgrammingError:
+            print("EXCEPTION: programming logic error -> not only code logic, also database table etc...")
+            return "ProgrammingError"
+        elif error.__class__ == err.OperationalError:
+            print("EXCEPTION: check the connection or mysql server, and executed sql.")
+            return "OperationalError"
+        elif error.__class__ == err.InterfaceError:
+            print("EXCEPTION: check the sql query -> maybe there is a query value error.")
+            return "InterfaceError"
+        else:
+            print(error)
+            return str(error.__class__)
+
+    return True
