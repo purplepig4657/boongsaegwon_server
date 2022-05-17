@@ -5,4 +5,6 @@ boongsaegwon_server.iml
 .idea
 
 database/__pycache__
+database/data_handle/__pycache__
+database/data_operation/__pycache__
 

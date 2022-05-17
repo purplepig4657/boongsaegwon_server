@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify
-from database import user_data, store_data
-from database import user_data_handle, store_data_handle
+
+from database.data_operation import store_data, user_data
+from database.data_handle import store_data_handle, user_data_handle, location_data_handle
+
 import json
 
 app = Flask(__name__, template_folder='templates')
@@ -32,7 +34,7 @@ def json_test():
 @app.route('/db')
 def db():
     result = user_data_handle.find_user(id="asdf")
-    user_data_handle.create_user(id="ksdfjksdjfkd", password="fdsdksdgkdjsfkffsd")
+    user_data_handle.create_user(id="sodgjodf", password="fdsdksdgkdjsfkffsd")
     user_data_handle.update_user(id="d", password="sdkfjksdjf", store_id=243)
     print(store_data_handle.find_store(store_id=2))
     # user_data.insert_user_info("gsdgsf", "sgadfsdf")
@@ -41,7 +43,7 @@ def db():
         "name": "asdf",
         "asdf": "asdf"
     }
-    store_data.insert_store_info("asdfa", "asdfasd", "asdfasdf", "asdfasdf", menu_info=json.dumps(test_json))
+    # store_data.insert_store_info("asdfa", "asdfasd", "asdfasdf", "asdfasdf", menu_info=json.dumps(test_json))
     store_data.update_store_info(store_id=2, name="lsakdjhflksdf")
 
     return str(result)

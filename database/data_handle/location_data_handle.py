@@ -1,14 +1,11 @@
 from pymysql import err
-from flask_bcrypt import Bcrypt
 
-from database import user_data
-from database import store_data_handle
-from database.data_validation import utf8len, data_len
+from database.data_operation import location_data
 
 
-def find_user(id):
+def find_location(store_id):
     try:
-        result = user_data.get_user_info(id=id)
+        result = location_data.get_location_info(store_id=store_id)
     except Exception as error:
         print(error.__class__)
         if error.__class__ == err.ProgrammingError:
@@ -30,25 +27,46 @@ def find_user(id):
         return result[0]
 
 
-def create_user(id, password):
-    if find_user(id=id) is not None:  # ID Integrity Check
+def find_all_location():
+    try:
+        result = location_data.get_all_location_info()
+    except Exception as error:
+        print(error.__class__)
+        if error.__class__ == err.ProgrammingError:
+            print("EXCEPTION: programming logic error -> not only code logic, also database table etc...")
+            return "ProgrammingError"
+        elif error.__class__ == err.OperationalError:
+            print("EXCEPTION: check the connection or mysql server, and executed sql.")
+            return "OperationalError"
+        elif error.__class__ == err.InterfaceError:
+            print("EXCEPTION: check the sql query -> maybe there is a query value error.")
+            return "InterfaceError"
+        else:
+            print(error)
+            return str(error.__class__)
+
+    if len(result) == 0:
+        return None
+    else:
+        return result[0]
+
+
+def create_location(store_id, store_name, is_open=None, latitude=None, longitude=None):
+    if find_location(store_id=store_id) is not None:  # store_id Integrity Check
         print(f"EXCEPTION: id is duplicated")
         return "DuplicatedId"
-    if id is not None and data_len['id'] < utf8len(id):
-        print(f"EXCEPTION: id is too long, have to be under {data_len['id']} bytes")
-        return "TooLongId"
-    if password is not None and data_len['password'] < utf8len(password):
-        print(f"EXCEPTION: password is too long, have to be under {data_len['password']} bytes")
-        return "TooLongPassword"
-
-    bcrypt = Bcrypt()
-    password_hash = bcrypt.generate_password_hash(password)  # password hashing
+    if latitude is not None and type(latitude) != float:
+        print(f"EXCEPTION: latitude type should be float")
+        return "TypeError"
+    if longitude is not None and type(longitude) != float:
+        print(f"EXCEPTION: longitude type should be float")
+        return "TypeError"
 
     try:
-        store_data_handle.create_store(name=id, store_name=None, category=None)
-        store_data = store_data_handle.find_store(name=id)
-        store_id = store_data['store_id']
-        user_data.insert_user_info(id=id, password=str(password_hash, 'utf-8'), store_id=store_id)
+        if is_open is None:
+            is_open = False
+        location_data.insert_location_info(store_id=store_id, store_name=store_name, is_open=is_open,
+                                           latitude=latitude, longitude=longitude)
 
     except Exception as error:
         print(error.__class__)
@@ -68,24 +86,19 @@ def create_user(id, password):
     return True
 
 
-def update_user(id, password=None, store_id=None):
-    if find_user(id=id) is None:  # ID validation Check
-        print(f"EXCEPTION: id is invalid")
-        return "InvalidId"
-    if store_id is not None and type(store_id) != int:
-        print(f"EXCEPTION: store_id type is int")
+def update_location(store_id, store_name=None, is_open=None, latitude=None, longitude=None):
+    if latitude is not None and type(latitude) != float:
+        print(f"EXCEPTION: latitude type should be float")
         return "TypeError"
-    if password is not None and data_len['password'] < utf8len(password):
-        print(f"EXCEPTION: password is too long, have to be under {data_len['password']} bytes")
-        return "TooLongPassword"
+    if longitude is not None and type(longitude) != float:
+        print(f"EXCEPTION: longitude type should be float")
+        return "TypeError"
 
     try:
-        if password is not None:
-            bcrypt = Bcrypt()
-            password_hash = bcrypt.generate_password_hash(password)  # password hashing
-            user_data.update_user_info(id=id, password=str(password_hash, 'utf-8'), store_id=store_id)
-        else:
-            user_data.update_user_info(id=id, store_id=store_id)
+        if is_open is None:
+            is_open = False
+        location_data.update_location_info(store_id=store_id, store_name=store_name, is_open=is_open,
+                                           latitude=latitude, longitude=longitude)
 
     except Exception as error:
         print(error.__class__)

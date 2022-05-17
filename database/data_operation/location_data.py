@@ -3,12 +3,12 @@ from pypika import Query, Table
 from database import data_connection
 
 
-def get_store_info_by_store_id(store_id):
+def get_location_info(store_id):
     test_db = data_connection.connect_to_test()
     cursor = data_connection.generate_cursor(test_db)
 
-    store_table = Table('store')
-    query = Query.from_(store_table).select('*').where(store_table.store_id == store_id)
+    location_table = Table('locationData')
+    query = Query.from_(location_table).select('*').where(location_table.store_id == store_id)
     sql = query.get_sql().replace('"', '')
 
     cursor.execute(sql)
@@ -20,12 +20,12 @@ def get_store_info_by_store_id(store_id):
     return result
 
 
-def get_store_info_by_name(name):
+def get_all_location_info():
     test_db = data_connection.connect_to_test()
     cursor = data_connection.generate_cursor(test_db)
 
-    store_table = Table('store')
-    query = Query.from_(store_table).select('*').where(store_table.name == name)
+    location_table = Table('locationData')
+    query = Query.from_(location_table).select('*')
     sql = query.get_sql().replace('"', '')
 
     cursor.execute(sql)
@@ -37,15 +37,14 @@ def get_store_info_by_name(name):
     return result
 
 
-def insert_store_info(name, store_name, category, store_description=None,
-                      store_open_info=None, store_photo=None, menu_info=None):
+def insert_location_info(store_id, store_name, is_open=None, latitude=None, longitude=None):
     test_db = data_connection.connect_to_test()
     cursor = data_connection.generate_cursor(test_db)
 
-    store_table = Table('store')
+    location_table = Table('locationData')
 
-    column = ["name", "store_name", "category", "store_description", "store_open_info", "store_photo", "menu_info"]
-    data = [name, store_name, category, store_description, store_open_info, store_photo, menu_info]
+    column = ["store_id", "store_name", "is_open", "latitude", "longitude"]
+    data = [store_id, store_name, is_open, latitude, longitude]
 
     insert_column = []
     insert_data = []
@@ -55,7 +54,7 @@ def insert_store_info(name, store_name, category, store_description=None,
             insert_column.append(c)
             insert_data.append(d)
 
-    query = Query.into(store_table).columns(*insert_column).insert(*insert_data)
+    query = Query.into(location_table).columns(*insert_column).insert(*insert_data)
     sql = query.get_sql()
 
     cursor.execute(sql)
@@ -65,21 +64,20 @@ def insert_store_info(name, store_name, category, store_description=None,
     test_db.close()
 
 
-def update_store_info(store_id, name=None, store_name=None, category=None, store_description=None,
-                      store_open_info=None, store_photo=None, menu_info=None):
+def update_location_info(store_id, store_name=None, is_open=None, latitude=None, longitude=None):
     # store_id cannot be changed
 
     test_db = data_connection.connect_to_test()
     cursor = data_connection.generate_cursor(test_db)
 
-    store_table = Table('store')
+    location_table = Table('locationData')
 
-    column = ["name", "store_name", "category", "store_description", "store_open_info", "store_photo", "menu_info"]
-    data = [name, store_name, category, store_description, store_open_info, store_photo, menu_info]
+    column = ["store_name", "is_open", "latitude", "longitude"]
+    data = [store_name, is_open, latitude, longitude]
 
     for c, d in zip(column, data):
         if d is not None:
-            query = Query.update(store_table).set(c, d).where(store_table.store_id == store_id)
+            query = Query.update(location_table).set(c, d).where(location_table.store_id == store_id)
             sql = query.get_sql()
             cursor.execute(sql)
 

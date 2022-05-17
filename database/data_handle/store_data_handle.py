@@ -1,6 +1,7 @@
 from pymysql import err
 
-from database import store_data
+from database.data_operation import store_data
+from database.data_handle import location_data_handle
 from database.data_validation import utf8len, data_len
 
 
@@ -32,7 +33,7 @@ def find_store(name=None, store_id=None):
         return result[0]
 
 
-def create_store(name, store_name, category, store_description=None,
+def create_store(store_id, name, store_name, category, store_description=None,
                  store_open_info=None, store_photo=None, menu_info=None):
     if name is not None and data_len['name'] < utf8len(name):
         print(f"EXCEPTION: name is too long, have to be under {data_len['name']} bytes")
@@ -48,9 +49,11 @@ def create_store(name, store_name, category, store_description=None,
         return "TooLongStoreDescription"
 
     try:
-        store_data.insert_store_info(name=name, store_name=store_name, category=category,
+        store_data.insert_store_info(store_id=store_id, name=name, store_name=store_name, category=category,
                                      store_description=store_description, store_open_info=store_open_info,
                                      store_photo=store_photo, menu_info=menu_info)
+        location_data_handle.create_location(store_id=store_id, store_name=store_name)
+
     except Exception as error:
         print(error.__class__)
         if error.__class__ == err.ProgrammingError:
@@ -72,7 +75,7 @@ def create_store(name, store_name, category, store_description=None,
 def update_store(store_id, name=None, store_name=None, category=None, store_description=None,
                  store_open_info=None, store_photo=None, menu_info=None):
     if type(store_id) != int:
-        print(f"EXCEPTION: store_id type is int")
+        print(f"EXCEPTION: store_id type should be int")
         return "TypeError"
     if name is not None and data_len['name'] < utf8len(name):
         print(f"EXCEPTION: name is too long, have to be under {data_len['name']} bytes")
