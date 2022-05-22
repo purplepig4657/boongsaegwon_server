@@ -53,6 +53,7 @@ def create_user(id, password):
 
     except Exception as error:
         print(error.__class__)
+        print(error)
         if error.__class__ == err.ProgrammingError:
             print("EXCEPTION: programming logic error -> not only code logic, also database table etc...")
             return "ProgrammingError"
@@ -69,7 +70,7 @@ def create_user(id, password):
     return True
 
 
-def update_user(id, password=None, store_id=None):
+def update_user(id, password=None, store_id=None, token=None):
     if find_user(id=id) is None:  # ID validation Check
         print(f"EXCEPTION: id is invalid")
         return "InvalidId"
@@ -84,9 +85,9 @@ def update_user(id, password=None, store_id=None):
         if password is not None:
             bcrypt = Bcrypt()
             password_hash = bcrypt.generate_password_hash(password)  # password hashing
-            user_data.update_user_info(id=id, password=str(password_hash, 'utf-8'), store_id=store_id)
+            user_data.update_user_info(id=id, password=str(password_hash, 'utf-8'), store_id=store_id, token=token)
         else:
-            user_data.update_user_info(id=id, store_id=store_id)
+            user_data.update_user_info(id=id, store_id=store_id, token=token)
 
     except Exception as error:
         print(error.__class__)

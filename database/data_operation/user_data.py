@@ -19,7 +19,7 @@ def get_user_info(id):
     return result
 
 
-def insert_user_info(id, password, store_id=None):
+def insert_user_info(id, password, store_id=None, token=None):
     test_db = data_connection.connect_to_test()
     cursor = data_connection.generate_cursor(test_db)
 
@@ -37,6 +37,9 @@ def insert_user_info(id, password, store_id=None):
     if store_id:
         insert_column.append("store_id")
         insert_data.append(store_id)
+    if token:
+        insert_column.append("token")
+        insert_data.append(token)
 
     query = Query.into(basic_user_info).columns(*insert_column).insert(*insert_data)
 
@@ -48,7 +51,7 @@ def insert_user_info(id, password, store_id=None):
     test_db.close()
 
 
-def update_user_info(id, password=None, store_id=None):
+def update_user_info(id, password=None, store_id=None, token=None):
     # id cannot be changed
 
     test_db = data_connection.connect_to_test()
@@ -60,6 +63,8 @@ def update_user_info(id, password=None, store_id=None):
         update_data.append(['password', password])
     if store_id:
         update_data.append(['store_id', store_id])
+    if token:
+        update_data.append(['token', token])
 
     basic_user_info = Table('basicUserInfo')
 
