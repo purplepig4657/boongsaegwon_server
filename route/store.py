@@ -44,7 +44,7 @@ def set_store_info():
         })
 
     jti = get_jwt()['jti']
-    if not auth(id=current_user_id, jti=jti):
+    if type(auth(id=current_user_id, jti=jti)) == str:
         return jsonify({
             "ok": False,
             "error": "authenticationFailedError"
