@@ -53,7 +53,6 @@ def create_user(id, password):
 
     except Exception as error:
         print(error.__class__)
-        print(error)
         if error.__class__ == err.ProgrammingError:
             print("EXCEPTION: programming logic error -> not only code logic, also database table etc...")
             return "ProgrammingError"

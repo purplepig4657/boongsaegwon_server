@@ -45,6 +45,6 @@ def auth(id, jti):
         return "idIsInvalidError"
 
     if user['token'] == jti:
-        return user
+        return True
     else:
         return "tokenIsInvalidError"

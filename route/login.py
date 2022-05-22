@@ -1,22 +1,19 @@
-from flask import Flask, request, jsonify
+from flask import request, jsonify, Blueprint
 
-from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, get_jwt
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from service import auth_service
 
 
-app = Flask(__name__)
-
-app.config["JWT_SECRET_KEY"] = "secret_key"
-jwt = JWTManager(app)
+login_route = Blueprint('login_route', __name__, url_prefix='/')
 
 
-@app.route("/login", methods=['POST'])
+@login_route.route("/login", methods=['POST'])
 def login():
     login_info = request.get_json()
     result = auth_service.login(login_info=login_info)
 
     if type(result) == str:
-        jsonify({
+        return jsonify({
             "ok": False,
             "error": result,
             "token": None
@@ -29,7 +26,7 @@ def login():
         })
 
 
-@app.route("/logout", methods=['POST'])
+@login_route.route("/logout", methods=['POST'])
 @jwt_required()
 def logout():
     current_user_id = get_jwt_identity()
@@ -53,7 +50,7 @@ def logout():
         })
 
 
-@app.route("/auth", methods=['POST'])
+@login_route.route("/auth", methods=['POST'])
 @jwt_required()
 def auth():
     current_user_id = get_jwt_identity()
@@ -68,7 +65,3 @@ def auth():
     result = auth_service.auth(id=current_user_id, jti=jti)
 
     return result
-
-
-if __name__ == '__main__':
-    app.run('0.0.0.0', port=8000, debug=True)

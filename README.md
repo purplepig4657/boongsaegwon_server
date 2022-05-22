@@ -5,7 +5,7 @@
 | route           | required data                                                                                                                                                                                     | response data                                                                                                                                                                                                          | description |
 |-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------|
 | /               | None                                                                                                                                                                                              | - html                                                                                                                                                                                                                 | for test    |
-| /get_store_info | json("id": String, "token": String)                                                                                                                                                               | - json("ok": Boolean, "error": String(if "ok" is false), "name": String, "store_name": String, "category": String, "store_description": String, "store_open_info": String, "store_photo": json(), "menu_info": json()) |             |
+| /get_store_info | json("id": String)                                                                                                                                                                                | - json("ok": Boolean, "error": String(if "ok" is false), "name": String, "store_name": String, "category": String, "store_description": String, "store_open_info": String, "store_photo": json(), "menu_info": json()) |             |
 | /get_location   | None                                                                                                                                                                                              | - json("ok": Boolean, "error": String(if "ok" is false), "store_id": Int, locations": [json("latitude": Double, "longitude": Double), ...])                                                                            |             |
 | /set_store_info | json("id": String, "token": String, "name": String, "store_name": String, "category": String, "store_description": String, "store_open_info": json(), "store_photo": json(), "menu_info": json()) | - json("ok": Boolean, "error": String(if "ok" is false))                                                                                                                                                               |             |
 | /set_location   | json("id": String, "token": String, "latitude": Double, "longitude": Double, "is_open": Boolean)                                                                                                  | - json("ok": Boolean, "error": String(if "ok" is false))                                                                                                                                                               |             |
@@ -32,7 +32,7 @@
 > &nbsp;&nbsp;&nbsp;&nbsp;"category": "Default", <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;"store_description": "It is purple pig's store", <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;"store_open_info": { <br>
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;information: [<br>
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"information": [<br>
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"월, 화 -> 대전광역시 유성구 ~ 16시 ~ 20시", <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"월, 화 -> 대전광역시 유성구 ~ 16시 ~ 20시", <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;] <br>
@@ -73,13 +73,12 @@
 ### request
 > { <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;"id": "purplepig", <br>
-> &nbsp;&nbsp;&nbsp;&nbsp;"token": "valid_token", <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;"name": "changed name", <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;"store_name": "my_store", <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;"category": "Default", <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;"store_description": "It is purple pig's store. ok?", <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;"store_open_info": { <br>
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;information: [<br>
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"information": [<br>
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"월, 화 -> 대전광역시 유성구 ~ 16시 ~ 20시", <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"월, 화 -> 대전광역시 유성구 ~ 12시 ~ 20시", <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;] <br>
@@ -110,7 +109,6 @@
 ### request
 > { <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;"id": "purplepig", <br>
-> &nbsp;&nbsp;&nbsp;&nbsp;"token": "valid_token", <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;"latitude": 63.342435, <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;"longitude": 123.523425, <br>
 > &nbsp;&nbsp;&nbsp;&nbsp;"is_open": true, <br>
