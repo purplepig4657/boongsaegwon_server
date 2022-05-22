@@ -13,7 +13,6 @@ app = Flask(__name__, template_folder='templates')
 app.config["JWT_SECRET_KEY"] = "secret_key"
 jwt = JWTManager(app)
 
-
 app.register_blueprint(login.login_route)
 app.register_blueprint(store.store_route)
 app.register_blueprint(register.register_route)

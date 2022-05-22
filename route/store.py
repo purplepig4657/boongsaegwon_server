@@ -9,7 +9,7 @@ from service.auth_service import auth
 store_route = Blueprint('store_route', __name__, url_prefix='/')
 
 
-@store_route.route("/get_store", methods=['POST'])
+@store_route.route("/get_store_info", methods=['POST'])
 def get_store_info():
     store_info = request.get_json()
     result = store_service.get_store_info(store_info=store_info)
