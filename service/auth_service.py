@@ -27,7 +27,7 @@ def login(login_info):
 
         return {"token": access_token}
     else:
-        return "passwordIsNotMatchError"
+        return "passwordIsNotMatchedError"
 
 
 def logout(id):

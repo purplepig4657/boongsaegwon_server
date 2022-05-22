@@ -48,7 +48,7 @@ def find_all_location():
     if len(result) == 0:
         return None
     else:
-        return result[0]
+        return result
 
 
 def create_location(store_id, store_name, is_open=None, latitude=None, longitude=None):

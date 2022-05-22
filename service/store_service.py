@@ -18,9 +18,12 @@ def get_store_info(store_info):
 
     store_info = find_store(store_id=store_id)
 
-    store_info['store_open_info'] = json.loads(store_info['store_open_info'])
-    store_info['store_photo'] = json.loads(store_info['store_photo'])
-    store_info['menu_info'] = json.loads(store_info['menu_info'])
+    if store_info['store_open_info'] is not None:
+        store_info['store_open_info'] = json.loads(store_info['store_open_info'])
+    if store_info['store_photo'] is not None:
+        store_info['store_photo'] = json.loads(store_info['store_photo'])
+    if store_info['menu_info'] is not None:
+        store_info['menu_info'] = json.loads(store_info['menu_info'])
 
     if type(store_info) == str:
         return store_info

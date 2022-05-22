@@ -4,7 +4,7 @@ from database.data_operation import store_data, user_data
 from database.data_handle import store_data_handle, user_data_handle, location_data_handle
 from flask_jwt_extended import JWTManager
 
-from route import login, store
+from route import login, register, store, location
 
 import json
 
@@ -16,6 +16,8 @@ jwt = JWTManager(app)
 
 app.register_blueprint(login.login_route)
 app.register_blueprint(store.store_route)
+app.register_blueprint(register.register_route)
+app.register_blueprint(location.location_route)
 
 
 @app.route('/')
@@ -23,7 +25,7 @@ def main():
     return render_template('map.html')
 
 
-@app.route('/get')
+'''@app.route('/get')
 def get_test():
     data = request.args
     return data['name']
@@ -79,7 +81,7 @@ def db():
     # store_data.insert_store_info("asdfa", "asdfasd", "asdfasdf", "asdfasdf", menu_info=json.dumps(test_json))
     store_data.update_store_info(store_id=2, name="lsakdjhflksdf")
 
-    return str(result)
+    return str(result)'''
 
 
 host = '0.0.0.0'

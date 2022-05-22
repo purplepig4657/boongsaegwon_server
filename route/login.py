@@ -1,6 +1,6 @@
 from flask import request, jsonify, Blueprint
 
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from service import auth_service
 
 
@@ -50,6 +50,7 @@ def logout():
         })
 
 
+'''
 @login_route.route("/auth", methods=['POST'])
 @jwt_required()
 def auth():
@@ -65,3 +66,4 @@ def auth():
     result = auth_service.auth(id=current_user_id, jti=jti)
 
     return result
+'''

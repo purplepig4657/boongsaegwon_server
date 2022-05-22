@@ -2,17 +2,17 @@ from flask import request, jsonify, Blueprint
 
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
-from service import store_service
+from service import location_service
 from service.auth_service import auth
 
 
-store_route = Blueprint('store_route', __name__, url_prefix='/')
+location_route = Blueprint('location_route', __name__, url_prefix='/')
 
 
-@store_route.route("/get_store", methods=['POST'])
-def get_store_info():
-    store_info = request.get_json()
-    result = store_service.get_store_info(store_info=store_info)
+@location_route.route("/get_location", methods=['POST'])
+def get_location_info():
+    location_info = request.get_json()
+    result = location_service.get_location_info(location_info=location_info)
 
     if type(result) == str:
         return jsonify({
@@ -23,19 +23,33 @@ def get_store_info():
         return jsonify({
             "ok": True,
             "error": None,
-            "name": result['name'],
             "store_name": result['store_name'],
-            "category": result['category'],
-            "store_description": result['store_description'],
-            "store_open_info": result['store_open_info'],
-            "store_photo": result['store_photo'],
-            "menu_info": result['menu_info']
+            "is_open": result['is_open'],
+            "latitude": result['latitude'],
+            "longitude": result['longitude']
         })
 
 
-@store_route.route("/set_store_info", methods=['POST'])
+@location_route.route("/get_all_location", methods=['POST'])
+def get_all_location_info():
+    result = location_service.get_all_location_info()
+
+    if type(result) == str:
+        return jsonify({
+            "ok": False,
+            "error": result
+        })
+    else:
+        return jsonify({
+            "ok": True,
+            "error": None,
+            "locations": result
+        })
+
+
+@location_route.route("/set_location", methods=['POST'])
 @jwt_required()
-def set_store_info():
+def set_location_info():
     current_user_id = get_jwt_identity()
     if not current_user_id:
         jsonify({
@@ -50,14 +64,14 @@ def set_store_info():
             "error": "authenticationFailedError"
         })
 
-    store_info = request.get_json()
-    if current_user_id != store_info['id']:
+    location_info = request.get_json()
+    if current_user_id != location_info['id']:
         return jsonify({
             "ok": False,
             "error": "idAndTokenIsNotMatchedError"
         })
 
-    result = store_service.set_store_info(store_info=store_info)
+    result = location_service.set_location_info(location_info=location_info)
 
     if type(result) == str:
         return jsonify({

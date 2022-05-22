@@ -2,15 +2,17 @@
 
 
 ## API
-| route           | required data                                                                                                                                                                                     | response data                                                                                                                                                                                                          | description |
-|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------|
-| /               | None                                                                                                                                                                                              | - html                                                                                                                                                                                                                 | for test    |
-| /get_store_info | json("id": String)                                                                                                                                                                                | - json("ok": Boolean, "error": String(if "ok" is false), "name": String, "store_name": String, "category": String, "store_description": String, "store_open_info": String, "store_photo": json(), "menu_info": json()) |             |
-| /get_location   | None                                                                                                                                                                                              | - json("ok": Boolean, "error": String(if "ok" is false), "store_id": Int, locations": [json("latitude": Double, "longitude": Double), ...])                                                                            |             |
-| /set_store_info | json("id": String, "token": String, "name": String, "store_name": String, "category": String, "store_description": String, "store_open_info": json(), "store_photo": json(), "menu_info": json()) | - json("ok": Boolean, "error": String(if "ok" is false))                                                                                                                                                               |             |
-| /set_location   | json("id": String, "token": String, "latitude": Double, "longitude": Double, "is_open": Boolean)                                                                                                  | - json("ok": Boolean, "error": String(if "ok" is false))                                                                                                                                                               |             |
-| /login          | json("id": String, "password": String)                                                                                                                                                            | - json("ok": Boolean, "error": String(if "ok" is false), "token": String)                                                                                                                                              |             |
-| /logout         | json("id": String)                                                                                                                                                                                | - json("ok": Boolean, "error": String(if "ok" is false))                                                                                                                                                               |             |
+| route             | required data                                                                                                                                                                    | response data                                                                                                                                                                                                          | description |
+|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------|
+| /                 | None                                                                                                                                                                             | - html                                                                                                                                                                                                                 | for test    |
+| /get_store_info   | json("id": String)                                                                                                                                                               | - json("ok": Boolean, "error": String(if "ok" is false), "name": String, "store_name": String, "category": String, "store_description": String, "store_open_info": String, "store_photo": json(), "menu_info": json()) |             |
+| /get_location     | json("store_id": String)                                                                                                                                                         | - json("ok": Boolean, "error": String(if "ok" is false), "store_id": Int, locations": json("latitude": Double, "longitude": Double))                                                                                   |             |
+| /get_all_location | None                                                                                                                                                                             | - json("ok": Boolean, "error": String(if "ok" is false), "store_id": Int, locations": [json("latitude": Double, "longitude": Double), ...])                                                                            |             |
+| /set_store_info   | json("id": String, "name": String, "store_name": String, "category": String, "store_description": String, "store_open_info": json(), "store_photo": json(), "menu_info": json()) | - json("ok": Boolean, "error": String(if "ok" is false))                                                                                                                                                               |             |
+| /set_location     | json("id": String, "latitude": Double, "longitude": Double, "is_open": Boolean)                                                                                                  | - json("ok": Boolean, "error": String(if "ok" is false))                                                                                                                                                               |             |
+| /login            | json("id": String, "password": String)                                                                                                                                           | - json("ok": Boolean, "error": String(if "ok" is false), "token": String)                                                                                                                                              |             |
+| /logout           | json("id": String)                                                                                                                                                               | - json("ok": Boolean, "error": String(if "ok" is false))                                                                                                                                                               |             |
+| /register         | json("id", String, "password": String)                                                                                                                                           | - json("ok": Boolean, "error": String(if "ok" is false))                                                                                                                                                               |             |
 
 
 ## API Examples
@@ -53,6 +55,24 @@
 
 
 ## /get_location: json
+
+### request
+> { <br>
+> &nbsp;&nbsp;&nbsp;&nbsp; "store_id": 2, <br>
+> }
+
+### response
+> { <br>
+> &nbsp;&nbsp;&nbsp;&nbsp;"ok": true, <br>
+> &nbsp;&nbsp;&nbsp;&nbsp;"error": None, <br>
+> &nbsp;&nbsp;&nbsp;&nbsp;"store_name": "hello", <br>
+> &nbsp;&nbsp;&nbsp;&nbsp;"is_open": True, <br>
+> &nbsp;&nbsp;&nbsp;&nbsp;"latitude": 34.53252, <br>
+> &nbsp;&nbsp;&nbsp;&nbsp;"longitude": 124.53252, <br>
+> }
+
+
+## /get_all_location: json
 
 ### request
 > None
