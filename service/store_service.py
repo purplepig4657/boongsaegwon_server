@@ -5,16 +5,23 @@ import json
 
 
 def get_store_info(store_info):
+    id = None
+    store_id = None
+
     try:
         id = store_info['id']
     except KeyError:
-        return "missingValueError"
+        try:
+            store_id = store_info['store_id']
+        except KeyError:
+            return "missingValueError"
 
-    user = find_user(id=id)
-    if user is None or type(user) == str:
-        return "idIsInvalidError"
+    if id is not None:
+        user = find_user(id=id)
+        if user is None or type(user) == str:
+            return "idIsInvalidError"
 
-    store_id = user['store_id']
+        store_id = user['store_id']
 
     store_info = find_store(store_id=store_id)
 
