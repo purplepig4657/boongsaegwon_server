@@ -1,20 +1,62 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8"/>
-    <title>Kakao 지도 시작하기</title>
-</head>
-<body>
-<div id="map" style="width:1080px; height:1920px;"></div>
-<script type="text/javascript" src=""></script>
-<script>
-    const container = document.getElementById('map');
-    const options = {
-        center: new kakao.maps.LatLng(33.450701, 126.570667),
-        level: 3
-    };
+    <head>
+        <meta charset="utf-8"/>
+        <title>우리 동네 붕세권</title>
+    </head>
+    <body>
+        <div id="map" style="width:1080px;height:1920px;"></div>
+        <script type="text/javascript" src=""></script>
 
-    const map = new kakao.maps.Map(container, options);
-</script>
-</body>
+        <script>
+            const HOST = "http://localhost:8000";
+
+            const container = document.getElementById('map');
+            const options = {
+                center: new kakao.maps.LatLng(36.366522, 127.344574),
+                level: 3,
+            };
+
+            const map = new kakao.maps.Map(container, options);
+
+            function setMarker(lat, lng, store_id) {
+                var markerPosition  = new kakao.maps.LatLng(lat, Math.abs(lng));
+                var marker = new kakao.maps.Marker({
+                    position: markerPosition
+                });
+
+                kakao.maps.event.addListener(marker, 'click', function() {
+                    taeHyeonTV.postMessage(store_id);
+                });
+                    
+                marker.setMap(map);
+            }
+
+            function setinitMap(lat, lng) {
+                var moveLatLon = new kakao.maps.LatLng(lat, Math.abs(lng)); 
+                map.panTo(moveLatLon);
+            }
+
+            const getAllLocations = () => {
+                let locations;
+
+                fetch(HOST + "/get_all_location", {
+                    method: "POST",
+                }).then((response) => response.json())
+                    .then((data) => locations = data.locations).then(() => {
+                        console.log(locations);
+                        for (let i = 0; i < locations.length; i++) {
+                            // if is_open is true, then indicate marker.
+                            if (locations[i].is_open == 1)
+                                setMarker(locations[i].latitude, locations[i].longitude, locations[i].store_id);
+                        }
+                    });
+            }
+
+            getAllLocations();
+
+                
+        </script>
+
+    </body>
 </html>
