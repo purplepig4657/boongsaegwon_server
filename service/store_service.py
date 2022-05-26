@@ -18,8 +18,7 @@ MENU_IMAGE_PATH = "/static/menu_image/"
 
 def is_base64(string):
     try:
-        base64.b64decode(string).decode('utf-8')
-        return True
+        return base64.b64encode(base64.b64decode(string)).decode('utf-8') == string
     except Exception as error:
         # print(error)
         return False
