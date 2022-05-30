@@ -5,7 +5,7 @@
         <title>우리 동네 붕세권</title>
     </head>
     <body>
-        <div id="map" style="width:1080px;height:1920px;"></div>
+        <div id="map" style="width:1080px; height:1920px;"></div>
         <script type="text/javascript" src=""></script>
 
         <script>
@@ -22,11 +22,13 @@
             function setMarker(lat, lng, store_id) {
                 var markerPosition  = new kakao.maps.LatLng(lat, Math.abs(lng));
                 var marker = new kakao.maps.Marker({
-                    position: markerPosition
+                    position: markerPosition,
                 });
 
-                kakao.maps.event.addListener(marker, 'click', function() {
-                    taeHyeonTV.postMessage(store_id);
+                getStoreInfo(store_id, (storeInfo) => {
+                    kakao.maps.event.addListener(marker, 'click', function() {
+                        taeHyeonTV.postMessage(JSON.stringify(storeInfo));
+                    });
                 });
                     
                 marker.setMap(map);
@@ -51,6 +53,28 @@
                                 setMarker(locations[i].latitude, locations[i].longitude, locations[i].store_id);
                         }
                     });
+            }
+
+            const getStoreInfo = (store_id, callback) => {
+                let storeInfo;
+
+                const jsonForRequest = {
+                    store_id: store_id,
+                };
+
+                fetch(HOST + "/get_store_info", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body: JSON.stringify(jsonForRequest),
+                }).then((response) => response.json())
+                    .then((data) => storeInfo = data).then(() => {
+                        console.log(storeInfo);
+                        callback(storeInfo);
+                    });
+
+                return storeInfo;
             }
 
             getAllLocations();

@@ -1,5 +1,7 @@
 from flask_bcrypt import Bcrypt
 
+import datetime
+
 from database.data_handle.user_data_handle import find_user, update_user
 from flask_jwt_extended import create_access_token, decode_token
 
@@ -18,7 +20,8 @@ def login(login_info):
     bcrypt = Bcrypt()
 
     if bcrypt.check_password_hash(user['password'], password=password):
-        access_token = create_access_token(identity=id)
+        expires_delta = datetime.timedelta(days=1)
+        access_token = create_access_token(identity=id, expires_delta=expires_delta)
         jti = decode_token(access_token)['jti']
         is_success = update_user(id=id, token=jti)
 

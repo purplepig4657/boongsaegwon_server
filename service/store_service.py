@@ -100,6 +100,8 @@ def set_store_info(store_info):
 
     for i in range(len(store_photo_urls)):
         photo = store_photo_urls[i]
+        if photo is None:
+            continue
         if is_base64(photo):
             image_data = base64_decode(photo)
             file_name = file_name_generator(id) + '.png'
@@ -116,6 +118,8 @@ def set_store_info(store_info):
 
     for i in range(len(menu_info)):
         photo = menu[i]['photo']
+        if photo is None:
+            continue
         if is_base64(photo):
             image_data = base64_decode(photo)
             file_name = file_name_generator(id) + '.png'
